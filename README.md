@@ -5,11 +5,11 @@
 	- 1) Spring Web RestController
 	- 2) Oracle SQL
 	- 3) Entity
-		-  @Id @GeneratedValue( generator = "product_id_seq" )
-		   private Long id;
-	                 private String name;
-		   private Long price;
-		   private int quantity;
+		-  @Id @GeneratedValue( generator = "product_id_seq" )<br />
+		   private Long id;<br />
+	                 private String name;<br />
+		   private Long price;<br />
+		   private int quantity;<br />
 	- 4) html/css/js
 
 3. 기능
