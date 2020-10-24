@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.form-inline {  
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+
+.form-inline label {
+  margin: 5px 10px 5px 0;
+}
+
+.form-inline input {
+  vertical-align: middle;
+  margin: 5px 10px 5px 0;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+.form-inline button {
+  padding: 10px 20px;
+  background-color: dodgerblue;
+  border: 1px solid #ddd;
+  color: white;
+  cursor: pointer;
+}
+
+.form-inline button:hover {
+  background-color: royalblue;
+}
+
+@media ( max-width: 800px ) {
+  .form-inline input {
+    margin: 10px 0;
+  }
+  
+  .form-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+</style>
+<meta charset="UTF-8">
+<title>update.html</title>
+</head>
+<body>
+  
+  <label for="pId">상품번호:</label>
+  <input type="text" id="pId" readonly>
+  <label for="pName">상품명:</label>
+  <input type="text" id="pName" placeholder="상품명을 입력하세요">
+  <label for="price">단가:</label>
+  <input type="number" min="1" id="price" placeholder="상품단가를 입력하세요">
+  <label for="quantity">수량:</label>
+  <input type="number" min="1" id="quantity" placeholder="수량을 입력하세요">
+  <button onclick="updateProduct()">변경</button>
+  <button onclick="deleteProduct()">삭제</button>
+  <br>
+  <button onclick="location.href='list.html'">돌아가기</button>
+  
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+  	const id = location.href.split( "=" )[1];
+  	getProduct();
+  	
+  	function getProduct() {
+  		axios.get( ( "http://127.0.0.1:8000/product/" + id ) )
+  			 .then( res => {
+  				const data = res.data;
+  				
+  				document.getElementById( "pId" ).value = data.id;
+  				document.getElementById( "pName" ).value = data.name;
+  				document.getElementById( "price" ).value = data.price;
+  				document.getElementById( "quantity" ).value = data.quantity;
+  			 })
+  		     .catch( error => console.log( error ) );
+  	}
+  	
+  	const verifyBlank = array => {
+  		let isBlank = true;
+
+  		if ( array.every( value => ( typeof( value ) == "number" ? value > 0 : value )  ) ) {
+  			isBlank = false;
+  		}
+		
+  		return isBlank;
+  	}
+  	
+  	function updateProduct() {
+  		const pName = document.getElementById( "pName" ).value.replace( / /g, "" );
+  		const price = Number( document.getElementById( "price" ).value );
+  		const quantity = Number( document.getElementById( "quantity" ).value );
+  		const array = [ pName, price, quantity ];
+
+  		if ( verifyBlank( array ) ) {
+  			return alert( "공백 혹은 0보다 낮은 숫자를 입력할 수 없습니다" );
+  		}
+
+  		axios.put( ( "http://127.0.0.1:8000/product/" + id ), {
+  			name: pName,
+  			price: price,
+  			quantity: quantity
+  		}).then( () => location.href = "list.html" )
+  		  .catch( error => console.log( error ) );
+  	}
+  	
+  	function deleteProduct() {
+  		axios.delete( ( "http://127.0.0.1:8000/product/" + id ) )
+  			 .then( () => location.href = "list.html" )
+  		     .catch( error => console.log( error ) );
+  	}
+  </script>
+</body>
+</html>

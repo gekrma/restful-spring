@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 75%;
+  margin: auto;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.tfoot td {
+  text-align: center;
+  border-top: hidden;
+}
+
+.right {
+  position: absolute;
+  right: 13%;
+}
+
+.header {
+  position: relative;
+  left: 12.5%;
+}
+
+table:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.content:before {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+<meta charset="UTF-8">
+<title>list.html</title>
+</head>
+<body>
+	<div class="header"><button onclick="location.href='index.html'">메인으로 돌아가기</button></div>
+	<div id="table"></div>
+	<div id="tfoot"></div>
+	<button class="right" onclick="location.href='insert.html'">상품 추가</button>
+	<p class="content">ddd</p>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script>
+		selectAll();
+	
+		function selectAll() {
+	        axios.get( "http://127.0.0.1:8000/product" )
+	             .then( res => {
+	            	const data = res.data;        	
+	            	let table = "<table class='table'>";
+	             	
+	            	table += "<tr>";
+	             	table += "<th>상품번호</th>";
+	             	table += "<th>상품명</th>";
+	             	table += "<th>단가</th>";
+	             	table += "<th>수량</th>";
+	             	table += "</tr>";
+	             	
+	             	if ( data.length ) {
+		            	data.sort( ( a, b ) => a.id - b.id );
+		            	
+		             	data.forEach( value => {
+		             		const href = ( "update.html?id=" + value.id );
+		             		const valueId = ( "<a href=" + href + ">" + value.id + "</a>" );
+		             			
+		             		table += "<tr>";
+		             		table += ( "<td>" + valueId + "</td>" );
+		             		table += ( "<td>" + value.name + "</td>" );
+		             		table += ( "<td>" + value.price.toLocaleString() + "</td>" );
+		             		table += ( "<td>" + value.quantity.toLocaleString() + "</td>" );
+		             		table += "</tr>";
+		             	});	
+	             	} else {
+	             		let tfoot = "<table class='tfoot'>";
+	             		
+	             		tfoot += "<tr>";
+	             		tfoot += ( "<td>" + "아무런 상품이 없습니다." + "</td>" );
+	             		tfoot += "</tr>";
+	             		tfoot += "</table>";
+	             		
+		             	document.getElementById( "tfoot" ).innerHTML = tfoot;
+	             	}
+	            	
+	             	table += "</table>";
+	             	document.getElementById( "table" ).innerHTML = table;
+	             })
+	             .catch( error => console.log( error ) );
+		};
+
+    </script>
+</body>
+</html>
